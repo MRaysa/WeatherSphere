@@ -14,6 +14,7 @@ import {
   FaChartLine,
   FaMapMarkedAlt,
   FaCloudSunRain,
+  FaMoon,
 } from "react-icons/fa";
 import { IoSunnyOutline, IoMoonOutline } from "react-icons/io5";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -258,7 +259,7 @@ const Navbar = () => {
           {/* Theme Toggle and Mobile Menu */}
           <div className="navbar-end gap-2">
             {/* Theme Toggle Button */}
-            <motion.button
+            {/* <motion.button
               onClick={toggleTheme}
               whileHover={hoverScale}
               whileTap={tapScale}
@@ -284,8 +285,23 @@ const Navbar = () => {
                   )}
                 </motion.div>
               </AnimatePresence>
+            </motion.button> */}
+            {/* Theme Toggle Button */}
+            <motion.button
+              onClick={toggleTheme}
+              className={`fixed top-4 right-4 z-50 p-3 rounded-full shadow-lg ${
+                theme === "dark"
+                  ? "bg-gray-700 text-yellow-300"
+                  : "bg-white text-gray-800"
+              }`}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              {theme === "dark" ? <IoMoonOutline /> : <FaMoon />}
             </motion.button>
-
             {/* Mobile Menu Button */}
             <div className="dropdown dropdown-end lg:hidden">
               <motion.label

@@ -49,15 +49,16 @@ const Navbar = () => {
       label: "Maps",
       children: [
         {
-          path: "/temperature-map",
-          icon: <WiThermometer size={20} />,
-          label: "Temperature",
-        },
-        {
           path: "/wind-map",
           icon: <WiStrongWind size={20} />,
           label: "Wind",
         },
+        {
+          path: "/temperature-map",
+          icon: <WiThermometer size={20} />,
+          label: "Temperature",
+        },
+
         {
           path: "/aqi-map",
           icon: <WiBarometer size={20} />,

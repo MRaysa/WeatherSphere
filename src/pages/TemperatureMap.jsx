@@ -3,6 +3,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 import mapboxgl from "mapbox-gl";
 import * as d3 from "d3";
+import Swal from "sweetalert2";
 import {
   FiSearch,
   FiBookmark,
@@ -709,17 +710,64 @@ const TemperatureMap = () => {
   };
 
   // Submit feedback
-  const submitFeedback = () => {
-    if (feedbackForm.name && feedbackForm.email && feedbackForm.message) {
-      console.log("Feedback Submitted:", feedbackForm);
-      alert("Thank you for your feedback!");
+
+  // Submit feedback with SweetAlert2
+  const submitFeedback = async () => {
+    // Validate fields
+    if (!feedbackForm.name || !feedbackForm.email || !feedbackForm.message) {
+      await Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please fill out all fields",
+        confirmButtonColor: "#3b82f6",
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        color: theme === "dark" ? "#ffffff" : "#1f2937",
+      });
+      return;
+    }
+
+    // Show loading indicator
+    Swal.fire({
+      title: "Submitting your feedback",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: theme === "dark" ? "#1f2937" : "#ffffff",
+      color: theme === "dark" ? "#ffffff" : "#1f2937",
+    });
+
+    // Simulate API call (replace with actual submission)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Success message
+      await Swal.fire({
+        icon: "success",
+        title: "Thank you!",
+        text: "Your feedback has been submitted successfully",
+        showConfirmButton: true,
+        confirmButtonColor: "#10b981",
+        timer: 3000,
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        color: theme === "dark" ? "#ffffff" : "#1f2937",
+      });
+
+      // Reset form and close modal
       setFeedbackForm({ name: "", email: "", message: "" });
       setShowFeedbackModal(false);
-    } else {
-      alert("Please fill out all fields.");
+    } catch (error) {
+      // Error handling
+      await Swal.fire({
+        icon: "error",
+        title: "Submission failed",
+        text: "There was an error submitting your feedback. Please try again later.",
+        confirmButtonColor: "#ef4444",
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        color: theme === "dark" ? "#ffffff" : "#1f2937",
+      });
     }
   };
-
   // Helper functions
   const formatDate = (dateString) => {
     const date = new Date(dateString);

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./public/logo.png" alt="WeatherSphere Logo" width="200"/>
+  <img src="public/dashboard.jpeg" alt="WeatherSphere Logo" width="200"/>
   
   # 🌤️ WeatherSphere
   

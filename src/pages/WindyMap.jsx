@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState, useRef, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Wind animation styles
 const windAnimationStyles = `
@@ -30,6 +31,7 @@ mapboxgl.accessToken =
   'pk.eyJ1IjoiYXlzYSIsImEiOiJjbTkwYXNidzYwajlrMmpzZHk1OWM4Zjk1In0.-4Im1sYjHHWGokgOrFw-qg';
 
 const WindyMap = () => {
+  const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
   const [map, setMap] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
@@ -346,34 +348,34 @@ const WindyMap = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-4 md:p-8'>
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-8'>
       <div className='max-w-7xl mx-auto'>
         <header className='text-center mb-8'>
-          <h1 className='text-4xl md:text-5xl font-bold text-gray-800 mb-4'>
+          <h1 className='text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4'>
             <span className='bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent'>
               Real-Time
             </span>{' '}
             Wind & Weather Visualization
           </h1>
-          <p className='text-lg text-gray-600'>
+          <p className='text-lg text-gray-600 dark:text-gray-300'>
             Advanced meteorological insights with beautiful interactive maps
           </p>
         </header>
 
         <section className='mb-8'>
           <div className='max-w-2xl mx-auto relative'>
-            <div className='flex items-center bg-white rounded-full p-2 shadow-lg'>
+            <div className='flex items-center bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg'>
               <input
                 type='text'
                 value={locationInput}
                 onChange={(e) => setLocationInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder='Search for a city or location...'
-                className='flex-grow px-6 py-3 border-0 bg-blue-50 text-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200' />
+                className='flex-grow px-6 py-3 border-0 bg-blue-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-500 placeholder:text-gray-500 dark:placeholder:text-gray-400' />
               <button
                 onClick={handleSearch}
                 disabled={loading}
-                className='ml-2 px-6 py-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition flex items-center disabled:opacity-50'
+                className='ml-2 px-6 py-3 bg-blue-500 dark:bg-blue-600 text-white rounded-full hover:bg-blue-600 dark:hover:bg-blue-700 transition flex items-center disabled:opacity-50'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -397,7 +399,7 @@ const WindyMap = () => {
         {currentWeather && (
           <section className='mb-8'>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-              <div className='bg-white rounded-2xl shadow-xl p-6'>
+              <div className='bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6'>
                 <div className='flex items-center mb-4'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -418,18 +420,18 @@ const WindyMap = () => {
                       d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
                   </svg>
                   <div>
-                    <h2 className='text-xl font-semibold text-slate-700'>
+                    <h2 className='text-xl font-semibold text-slate-700 dark:text-white'>
                       {currentWeather.location}, {currentWeather.country}
                     </h2>
-                    <p className='text-slate-500'>{currentWeather.localTime}</p>
+                    <p className='text-slate-500 dark:text-gray-400'>{currentWeather.localTime}</p>
                   </div>
                 </div>
                 <div className='flex justify-between items-center'>
                   <div>
-                    <p className='text-5xl font-bold text-slate-800'>
+                    <p className='text-5xl font-bold text-slate-800 dark:text-white'>
                       {currentWeather.temp}°C
                     </p>
-                    <p className='text-slate-500'>{currentWeather.condition}</p>
+                    <p className='text-slate-500 dark:text-gray-400'>{currentWeather.condition}</p>
                   </div>
                   <img
                     src={`https:${currentWeather.icon}`}
@@ -438,8 +440,8 @@ const WindyMap = () => {
                 </div>
               </div>
 
-              <div className='bg-white rounded-2xl shadow-xl p-6'>
-                <h3 className='text-lg font-semibold text-slate-700 mb-4 flex items-center'>
+              <div className='bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6'>
+                <h3 className='text-lg font-semibold text-slate-700 dark:text-white mb-4 flex items-center'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     className='h-5 w-5 mr-2 text-blue-500'
@@ -457,11 +459,11 @@ const WindyMap = () => {
                 </h3>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p className='text-slate-500'>Speed</p>
-                    <p className='text-2xl font-bold text-slate-800'>
+                    <p className='text-slate-500 dark:text-gray-400'>Speed</p>
+                    <p className='text-2xl font-bold text-slate-800 dark:text-white'>
                       {currentWeather.windSpeed} km/h
                     </p>
-                    <div className='w-full bg-slate-200 rounded-full h-2.5 mt-2'>
+                    <div className='w-full bg-slate-200 dark:bg-gray-700 rounded-full h-2.5 mt-2'>
                       <div
                         className='bg-blue-500 h-2.5 rounded-full'
                         style={{
@@ -474,40 +476,40 @@ const WindyMap = () => {
                     </div>
                   </div>
                   <div>
-                    <p className='text-slate-500'>Direction</p>
-                    <p className='text-2xl font-bold text-slate-800'>
+                    <p className='text-slate-500 dark:text-gray-400'>Direction</p>
+                    <p className='text-2xl font-bold text-slate-800 dark:text-white'>
                       {currentWeather.windDegree}° {currentWeather.windDir}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className='bg-white rounded-2xl shadow-xl p-6'>
-                <h3 className='text-lg font-semibold text-slate-700 mb-4'>
+              <div className='bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6'>
+                <h3 className='text-lg font-semibold text-slate-700 dark:text-white mb-4'>
                   Weather Details
                 </h3>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p className='text-slate-500'>Humidity</p>
-                    <p className='text-2xl font-bold text-slate-800'>
+                    <p className='text-slate-500 dark:text-gray-400'>Humidity</p>
+                    <p className='text-2xl font-bold text-slate-800 dark:text-white'>
                       {currentWeather.humidity}%
                     </p>
                   </div>
                   <div>
-                    <p className='text-slate-500'>Pressure</p>
-                    <p className='text-2xl font-bold text-slate-800'>
+                    <p className='text-slate-500 dark:text-gray-400'>Pressure</p>
+                    <p className='text-2xl font-bold text-slate-800 dark:text-white'>
                       {currentWeather.pressure} hPa
                     </p>
                   </div>
                   <div>
-                    <p className='text-slate-500'>Feels Like</p>
-                    <p className='text-2xl font-bold text-slate-800'>
+                    <p className='text-slate-500 dark:text-gray-400'>Feels Like</p>
+                    <p className='text-2xl font-bold text-slate-800 dark:text-white'>
                       {currentWeather.feelsLike}°C
                     </p>
                   </div>
                   <div>
-                    <p className='text-slate-500'>Visibility</p>
-                    <p className='text-2xl font-bold text-slate-800'>
+                    <p className='text-slate-500 dark:text-gray-400'>Visibility</p>
+                    <p className='text-2xl font-bold text-slate-800 dark:text-white'>
                       {currentWeather.visibility} km
                     </p>
                   </div>
@@ -516,8 +518,8 @@ const WindyMap = () => {
             </div>
 
             {forecast.length > 0 && (
-              <div className='bg-white rounded-2xl shadow-xl p-6 mb-8'>
-                <h3 className='text-lg font-semibold text-slate-700 mb-4'>
+              <div className='bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-8'>
+                <h3 className='text-lg font-semibold text-slate-700 dark:text-white mb-4'>
                   24-Hour Temperature Forecast
                 </h3>
                 <div className='overflow-x-auto'>
@@ -525,16 +527,16 @@ const WindyMap = () => {
                     {forecast.map((hour, index) => (
                       <div
                         key={index}
-                        className='flex flex-col items-center p-3 bg-blue-50 rounded-lg min-w-[80px] hover:bg-blue-100 transition-colors'
+                        className='flex flex-col items-center p-3 bg-blue-50 dark:bg-gray-700 rounded-lg min-w-[80px] hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors'
                       >
-                        <p className='text-sm text-slate-600 font-medium'>
+                        <p className='text-sm text-slate-600 dark:text-gray-300 font-medium'>
                           {hour.time.slice(-5)}
                         </p>
                         <img
                           src={`https:${hour.condition.icon}`}
                           alt={hour.condition.text}
                           className='w-10 h-10 my-2' />
-                        <p className='text-lg font-bold text-slate-800'>
+                        <p className='text-lg font-bold text-slate-800 dark:text-white'>
                           {hour.temp_c}°C
                         </p>
                       </div>
@@ -546,22 +548,22 @@ const WindyMap = () => {
           </section>
         )}
 
-        <section className='bg-white rounded-2xl shadow-xl overflow-hidden'>
+        <section className='bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden'>
           <div className='p-6'>
-            <h3 className='text-lg font-semibold text-slate-700 mb-2'>
+            <h3 className='text-lg font-semibold text-slate-700 dark:text-white mb-2'>
               Interactive Wind Map
             </h3>
-            <p className='text-slate-500 mb-4'>
+            <p className='text-slate-500 dark:text-gray-400 mb-4'>
               Visualize wind patterns and weather conditions
             </p>
           </div>
 
           <div className='relative' style={{ height: '600px' }}>
             {loading && (
-              <div className='absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10'>
+              <div className='absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-90 flex items-center justify-center z-10'>
                 <div className='text-center'>
                   <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4'></div>
-                  <p className='text-lg font-medium text-gray-700'>
+                  <p className='text-lg font-medium text-gray-700 dark:text-white'>
                     Loading wind data...
                   </p>
                 </div>
@@ -578,13 +580,13 @@ const WindyMap = () => {
             ></div>
 
           {searchedLocations.length > 0 && (
-            <div className='absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-xs z-10'>
-              <h3 className='font-semibold mb-3 text-lg'>Locations</h3>
+            <div className='absolute top-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 max-w-xs z-10'>
+              <h3 className='font-semibold mb-3 text-lg dark:text-white'>Locations</h3>
               <ul className='space-y-2'>
                 {searchedLocations.map((location, index) => (
                   <li
                     key={index}
-                    className='flex items-center hover:bg-gray-100 p-2 rounded cursor-pointer'
+                    className='flex items-center hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded cursor-pointer dark:text-gray-200'
                     onClick={() => {
                       if (map) {
                         map.flyTo({
@@ -606,12 +608,12 @@ const WindyMap = () => {
           )}
 
           {currentWeather && (
-            <div className='absolute bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10'>
+            <div className='absolute bottom-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 z-10'>
               <div className='flex flex-col space-y-4'>
                 <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4'>
                   <button
                     onClick={toggleAnimation}
-                    className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center'
+                    className='px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center'
                   >
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
@@ -634,7 +636,7 @@ const WindyMap = () => {
                     {isPlaying ? 'Pause' : 'Play'}
                   </button>
                   <div className='flex items-center'>
-                    <span className='text-sm font-medium mr-2'>Speed:</span>
+                    <span className='text-sm font-medium mr-2 dark:text-gray-200'>Speed:</span>
                     <input
                       type='range'
                       min='0.1'
@@ -643,22 +645,22 @@ const WindyMap = () => {
                       value={animationSpeed}
                       onChange={(e) => setAnimationSpeed(parseFloat(e.target.value))}
                       className='w-24' />
-                    <span className='text-sm ml-2 w-8'>
+                    <span className='text-sm ml-2 w-8 dark:text-gray-200'>
                       {animationSpeed}x
                     </span>
                   </div>
                 </div>
                 <div className='grid grid-cols-2 gap-4'>
-                  <div className='bg-gray-100 p-3 rounded-lg'>
-                    <p className='text-xs text-gray-500'>Wind Speed</p>
-                    <p className='text-xl font-bold'>
+                  <div className='bg-gray-100 dark:bg-gray-700 p-3 rounded-lg'>
+                    <p className='text-xs text-gray-500 dark:text-gray-400'>Wind Speed</p>
+                    <p className='text-xl font-bold dark:text-white'>
                       {currentWeather.windSpeed}{' '}
                       <span className='text-sm'>km/h</span>
                     </p>
                   </div>
-                  <div className='bg-gray-100 p-3 rounded-lg'>
-                    <p className='text-xs text-gray-500'>Direction</p>
-                    <p className='text-xl font-bold'>
+                  <div className='bg-gray-100 dark:bg-gray-700 p-3 rounded-lg'>
+                    <p className='text-xs text-gray-500 dark:text-gray-400'>Direction</p>
+                    <p className='text-xl font-bold dark:text-white'>
                       {currentWeather.windDir}
                     </p>
                   </div>
@@ -671,10 +673,10 @@ const WindyMap = () => {
 
         <section className='my-16'>
         <div className='text-center mb-12'>
-          <h2 className='text-3xl font-bold text-slate-800 mb-4'>
+          <h2 className='text-3xl font-bold text-slate-800 dark:text-white mb-4'>
             Advanced Weather Features
           </h2>
-          <p className='text-lg text-slate-600 max-w-2xl mx-auto'>
+          <p className='text-lg text-slate-600 dark:text-gray-300 max-w-2xl mx-auto'>
             Powerful tools for professionals and weather enthusiasts
           </p>
         </div>

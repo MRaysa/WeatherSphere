@@ -2,6 +2,29 @@
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+// Wind animation styles
+const windAnimationStyles = `
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+  
+  .wind-particle {
+    transition: opacity 0.3s ease;
+  }
+  
+  .wind-arrow {
+    transition: all 0.5s ease;
+  }
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = windAnimationStyles;
+  document.head.appendChild(styleSheet);
+}
+
 // Initialize Mapbox
 mapboxgl.accessToken =
   'pk.eyJ1IjoiYXlzYSIsImEiOiJjbTkwYXNidzYwajlrMmpzZHk1OWM4Zjk1In0.-4Im1sYjHHWGokgOrFw-qg';
@@ -17,8 +40,10 @@ const WindyMap = () => {
   const [forecast, setForecast] = useState([]);
 
   const mapContainer = useRef(null);
+  const particlesContainerRef = useRef(null);
   const markersRef = useRef([]);
   const animationIdRef = useRef(null);
+  const particlesRef = useRef([]);
 
   const API_KEY = '1dec1896e77e4da5b0c195326251603';
   const BASE_URL = 'https://api.weatherapi.com/v1';
@@ -170,6 +195,91 @@ const WindyMap = () => {
     [handleSearch]
   );
 
+  // Create wind particles
+  const createWindParticles = useCallback(() => {
+    if (!particlesContainerRef.current || !currentWeather) return;
+
+    // Clear existing particles
+    particlesRef.current.forEach(particle => {
+      if (particle.element && particle.element.parentNode) {
+        particle.element.parentNode.removeChild(particle.element);
+      }
+    });
+    particlesRef.current = [];
+
+    const container = particlesContainerRef.current;
+    const particleCount = Math.min(50, Math.max(10, Math.floor(currentWeather.windSpeed)));
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'wind-particle';
+      particle.style.cssText = `
+        position: absolute;
+        width: ${Math.random() * 3 + 2}px;
+        height: ${Math.random() * 3 + 2}px;
+        background: rgba(59, 130, 246, ${Math.random() * 0.5 + 0.3});
+        border-radius: 50%;
+        pointer-events: none;
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        box-shadow: 0 0 ${Math.random() * 10 + 5}px rgba(59, 130, 246, 0.5);
+      `;
+      
+      container.appendChild(particle);
+      
+      particlesRef.current.push({
+        element: particle,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        speed: (Math.random() * 0.5 + 0.5) * (currentWeather.windSpeed / 10),
+        size: Math.random() * 3 + 2,
+      });
+    }
+
+    // Create wind direction arrows
+    for (let i = 0; i < 15; i++) {
+      const arrow = document.createElement('div');
+      arrow.className = 'wind-arrow';
+      arrow.style.cssText = `
+        position: absolute;
+        width: 30px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent);
+        transform: rotate(${currentWeather.windDegree}deg);
+        pointer-events: none;
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        animation: fadeInOut 3s infinite;
+      `;
+      
+      // Add arrow head
+      const arrowHead = document.createElement('div');
+      arrowHead.style.cssText = `
+        position: absolute;
+        right: -5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid rgba(59, 130, 246, 0.6);
+        border-top: 3px solid transparent;
+        border-bottom: 3px solid transparent;
+      `;
+      arrow.appendChild(arrowHead);
+      
+      container.appendChild(arrow);
+      
+      particlesRef.current.push({
+        element: arrow,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        speed: (Math.random() * 0.3 + 0.2) * (currentWeather.windSpeed / 10),
+        size: 30,
+      });
+    }
+  }, [currentWeather]);
+
+  // Animate wind particles
   useEffect(() => {
     if (!currentWeather || !isPlaying) {
       if (animationIdRef.current) {
@@ -179,7 +289,39 @@ const WindyMap = () => {
       return;
     }
 
+    const windDegree = currentWeather.windDegree;
+    const windSpeedKmh = currentWeather.windSpeed;
+    const angleRad = (windDegree * Math.PI) / 180;
+    
+    // Use windSpeedKmh to influence animation
+    const baseSpeed = windSpeedKmh / 20; // Normalize wind speed for animation
+
     const animate = () => {
+      particlesRef.current.forEach(particle => {
+        if (!particle.element) return;
+
+        // Move particle in wind direction with baseSpeed factor
+        const speedFactor = particle.speed * animationSpeed * baseSpeed;
+        particle.x += Math.sin(angleRad) * speedFactor;
+        particle.y -= Math.cos(angleRad) * speedFactor;
+
+        // Wrap around edges
+        if (particle.x > 100) particle.x = 0;
+        if (particle.x < 0) particle.x = 100;
+        if (particle.y > 100) particle.y = 0;
+        if (particle.y < 0) particle.y = 100;
+
+        // Update position
+        particle.element.style.left = `${particle.x}%`;
+        particle.element.style.top = `${particle.y}%`;
+
+        // Add slight opacity variation for depth
+        if (particle.element.className === 'wind-particle') {
+          const opacity = Math.sin(Date.now() * 0.001 + particle.x) * 0.2 + 0.5;
+          particle.element.style.opacity = opacity;
+        }
+      });
+
       animationIdRef.current = requestAnimationFrame(animate);
     };
 
@@ -191,6 +333,13 @@ const WindyMap = () => {
       }
     };
   }, [currentWeather, isPlaying, animationSpeed]);
+
+  // Create particles when weather data changes or animation starts
+  useEffect(() => {
+    if (currentWeather && isPlaying) {
+      createWindParticles();
+    }
+  }, [currentWeather, isPlaying, createWindParticles]);
 
   const toggleAnimation = () => {
     setIsPlaying(!isPlaying);
@@ -422,6 +571,13 @@ const WindyMap = () => {
             )}
 
             <div ref={mapContainer} className='w-full h-full'></div>
+
+            {/* Wind Particles Animation Overlay */}
+            <div 
+              ref={particlesContainerRef}
+              className='absolute inset-0 pointer-events-none overflow-hidden'
+              style={{ zIndex: 5 }}
+            ></div>
 
           {searchedLocations.length > 0 && (
             <div className='absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-xs z-10'>

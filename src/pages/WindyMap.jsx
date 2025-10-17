@@ -521,26 +521,24 @@ const WindyMap = () => {
                   24-Hour Temperature Forecast
                 </h3>
                 <div className='overflow-x-auto'>
-                  <div className='flex gap-4 min-w-max'>
-                    {forecast
-                      .filter((_, i) => i % 3 === 0)
-                      .map((hour, index) => (
-                        <div
-                          key={index}
-                          className='flex flex-col items-center p-3 bg-blue-50 rounded-lg min-w-[80px]'
-                        >
-                          <p className='text-sm text-slate-600'>
-                            {hour.time.slice(-5)}
-                          </p>
-                          <img
-                            src={`https:${hour.condition.icon}`}
-                            alt={hour.condition.text}
-                            className='w-10 h-10 my-2' />
-                          <p className='text-lg font-bold text-slate-800'>
-                            {hour.temp_c}°C
-                          </p>
-                        </div>
-                      ))}
+                  <div className='flex gap-4 min-w-max pb-2'>
+                    {forecast.map((hour, index) => (
+                      <div
+                        key={index}
+                        className='flex flex-col items-center p-3 bg-blue-50 rounded-lg min-w-[80px] hover:bg-blue-100 transition-colors'
+                      >
+                        <p className='text-sm text-slate-600 font-medium'>
+                          {hour.time.slice(-5)}
+                        </p>
+                        <img
+                          src={`https:${hour.condition.icon}`}
+                          alt={hour.condition.text}
+                          className='w-10 h-10 my-2' />
+                        <p className='text-lg font-bold text-slate-800'>
+                          {hour.temp_c}°C
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
